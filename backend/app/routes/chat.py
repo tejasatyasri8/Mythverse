@@ -19,7 +19,9 @@ def chat(
     ai_response = generate_response(
         db,
         request.session_id,
-        request.message
+        request.message,
+        request.religion,
+        request.holy_book
     )
 
     user_message = ChatHistory(

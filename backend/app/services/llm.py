@@ -22,7 +22,9 @@ SYSTEM_MESSAGE = {
 def generate_response(
     db: Session,
     session_id: str,
-    user_message: str
+    user_message: str,
+    religion: str,
+    holy_book: str,
 ):
 
     try:
