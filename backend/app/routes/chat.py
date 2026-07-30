@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.chat_models import ChatRequest
@@ -16,6 +16,13 @@ def chat(
     db: Session = Depends(get_db)
 ):
 
+    if not request.religion or not request.holy_book:
+        raise HTTPException(
+            status_code=400,
+            detail="Please select religion and holy book"
+        )
+
+
     ai_response = generate_response(
         db,
         request.session_id,
@@ -24,23 +31,32 @@ def chat(
         request.holy_book
     )
 
+
+    answer = ai_response["answer"]
+    sources = ai_response["sources"]
+
+
     user_message = ChatHistory(
         session_id=request.session_id,
         role="user",
         content=request.message
     )
 
+
     assistant_message = ChatHistory(
         session_id=request.session_id,
         role="assistant",
-        content=ai_response
+        content=answer
     )
+
 
     db.add(user_message)
     db.add(assistant_message)
 
     db.commit()
 
+
     return {
-        "reply": ai_response
+        "reply": answer,
+        "sources": sources
     }
