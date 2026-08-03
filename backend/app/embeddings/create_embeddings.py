@@ -2,8 +2,10 @@ import json
 import pickle
 from pathlib import Path
 
-import faiss
-import numpy as np
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct
+from qdrant_client.models import Distance, VectorParams
+import uuid
 from sentence_transformers import SentenceTransformer
 
 
@@ -44,8 +46,32 @@ VECTORSTORE_DIR.mkdir(
 model = SentenceTransformer(
     "all-MiniLM-L6-v2"
 )
+client = QdrantClient(
+    url="http://localhost:6333"
+)
 
+COLLECTION_NAME = "mythverse"
 
+# Create collection if not exists
+
+collections = client.get_collections().collections
+
+existing = [c.name for c in collections]
+
+if COLLECTION_NAME not in existing:
+
+    client.create_collection(
+        collection_name=COLLECTION_NAME,
+        vectors_config=VectorParams(
+            size=384,
+            distance=Distance.COSINE
+        )
+    )
+
+    print("Collection created.")
+
+else:
+    print("Collection already exists.")
 documents = []
 metadata = []
 
@@ -136,26 +162,40 @@ embeddings = model.encode(
 )
 
 
-# Create FAISS index
+# Upload embeddings to Qdrant
 
-dimension = embeddings.shape[1]
+batch_size = 500
 
-index = faiss.IndexFlatIP(
-    dimension
-)
+for start in range(0, len(embeddings), batch_size):
 
-index.add(
-    np.array(embeddings)
-    .astype("float32")
-)
+    batch_points = []
+
+    end = min(start + batch_size, len(embeddings))
+
+    for i in range(start, end):
+
+        batch_points.append(
+            PointStruct(
+                id=str(uuid.uuid4()),
+
+                vector=embeddings[i].tolist(),
+
+                payload={
+                    "text": documents[i],
+                    **metadata[i]
+                }
+            )
+        )
 
 
-# Save FAISS index
+    client.upsert(
+        collection_name=COLLECTION_NAME,
+        points=batch_points
+    )
 
-faiss.write_index(
-    index,
-    str(INDEX_PATH)
-)
+    print(f"Uploaded {end}/{len(embeddings)}")
+
+print("Uploaded embeddings to Qdrant.")
 
 
 # Save documents
