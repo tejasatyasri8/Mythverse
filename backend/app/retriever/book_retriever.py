@@ -1,32 +1,14 @@
-import pickle
-from pathlib import Path
-
-import faiss
+from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
+from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+COLLECTION_NAME = "mythverse"
 
 
-INDEX_PATH = (
-    BASE_DIR
-    / "app"
-    / "vectorstore"
-    / "mythverse.index"
-)
-
-DOCUMENTS_PATH = (
-    BASE_DIR
-    / "app"
-    / "vectorstore"
-    / "documents.pkl"
-)
-
-METADATA_PATH = (
-    BASE_DIR
-    / "app"
-    / "vectorstore"
-    / "metadata.pkl"
+# Connect to Qdrant Docker
+client = QdrantClient(
+    url="http://localhost:6333"
 )
 
 
@@ -36,82 +18,75 @@ model = SentenceTransformer(
 )
 
 
-# Load FAISS index
-index = faiss.read_index(
-    str(INDEX_PATH)
-)
-
-
-# Load documents
-with open(
-    DOCUMENTS_PATH,
-    "rb"
-) as file:
-    documents = pickle.load(file)
-
-
-# Load metadata
-with open(
-    METADATA_PATH,
-    "rb"
-) as file:
-    metadata = pickle.load(file)
-
-
-
 def search_book(
     query: str,
     religion: str,
     book: str,
-    top_k: int = 3
+    top_k: int = 2
 ):
 
+    # Create query embedding
+
     query_embedding = model.encode(
-        [query],
+        query,
         convert_to_numpy=True,
         normalize_embeddings=True
     )
 
+    print("=" * 50)
+    print("Religion:", religion)
+    print("Book:", book)
+    print("Query:", query)
+    # Search Qdrant with filters
 
-    # Search more results first
-    distances, indices = index.search(
-        query_embedding.astype("float32"),
-        20
+    results = client.query_points(
+        collection_name=COLLECTION_NAME,
+
+        query=query_embedding.tolist(),
+
+        query_filter=Filter(
+            must=[
+                FieldCondition(
+                    key="religion",
+                    match=MatchValue(
+                        value=religion
+                    )
+                ),
+
+                FieldCondition(
+                    key="book",
+                    match=MatchValue(
+                        value=book
+                    )
+                )
+            ]
+        ),
+
+        limit=top_k
     )
 
 
-    results = []
+    output = []
 
 
-    for score, idx in zip(
-        distances[0],
-        indices[0]
-    ):
+    for point in results.points:
+        payload = point.payload or {}
+        print(point.payload)
 
-        if idx == -1:
-            continue
+        output.append(
+            {
+                "text": payload.get("text", ""),
 
+                "metadata": {
+                    "religion": payload.get("religion"),
+                    "book": payload.get("book"),
+                    "chapter": payload.get("chapter"),
+                    "verse": payload.get("verse")
+                },
 
-        meta = metadata[idx]
-
-
-        # Filter selected source
-        if (
-            meta["religion"] == religion
-            and meta["book"] == book
-        ):
-
-            results.append(
-                {
-                    "text": documents[idx],
-                    "metadata": meta,
-                    "score": float(score)
-                }
-            )
+                "score": point.score
+            }
+        )
 
 
-        if len(results) == top_k:
-            break
-
-
-    return results
+    return output

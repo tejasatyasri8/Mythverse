@@ -5,6 +5,7 @@ class ChatRequest(BaseModel):
     religion: str
     holy_book: str
     message: str
+    history: list = []
 
 class ChatResponse(BaseModel):
     reply: str
