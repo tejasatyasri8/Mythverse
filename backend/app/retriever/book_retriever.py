@@ -8,18 +8,50 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 COLLECTION_NAME = "mythverse"
 
 
-# Connect to Qdrant Docker
+# -----------------------------------
+# Environment variables
+# -----------------------------------
+
 load_dotenv()
+
+
+# -----------------------------------
+# Qdrant connection
+# -----------------------------------
+
 client = QdrantClient(
     url=os.getenv("QDRANT_URL"),
     api_key=os.getenv("QDRANT_API_KEY")
 )
 
-# Load embedding model once
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
 
+# -----------------------------------
+# Embedding model
+# -----------------------------------
+
+model = None
+
+
+def get_model():
+
+    global model
+
+    if model is None:
+
+        print("Loading embedding model...")
+
+        model = SentenceTransformer(
+            "all-MiniLM-L6-v2"
+        )
+
+        print("Embedding model loaded successfully.")
+
+    return model
+
+
+# -----------------------------------
+# Search book
+# -----------------------------------
 
 def search_book(
     query: str,
@@ -28,27 +60,40 @@ def search_book(
     top_k: int = 2
 ):
 
-    # Create query embedding
+    # Load model only when needed
+    embedding_model = get_model()
 
-    query_embedding = model.encode(
+
+    # -----------------------------------
+    # Create query embedding
+    # -----------------------------------
+
+    query_embedding = embedding_model.encode(
         query,
         convert_to_numpy=True,
         normalize_embeddings=True
     )
 
+
     print("=" * 50)
     print("Religion:", religion)
     print("Book:", book)
     print("Query:", query)
+
+
+    # -----------------------------------
     # Search Qdrant with filters
+    # -----------------------------------
 
     results = client.query_points(
+
         collection_name=COLLECTION_NAME,
 
         query=query_embedding.tolist(),
 
         query_filter=Filter(
             must=[
+
                 FieldCondition(
                     key="religion",
                     match=MatchValue(
@@ -62,6 +107,7 @@ def search_book(
                         value=book
                     )
                 )
+
             ]
         ),
 
@@ -69,11 +115,17 @@ def search_book(
     )
 
 
+    # -----------------------------------
+    # Format results
+    # -----------------------------------
+
     output = []
 
 
     for point in results.points:
+
         payload = point.payload or {}
+
         print(point.payload)
 
         output.append(
