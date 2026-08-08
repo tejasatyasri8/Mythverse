@@ -21,3 +21,5 @@ qdrant_storage/
 
 # Vector databases
 backend/app/vectorstore/qdrant_data/
+
+backend/.env

@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 from qdrant_client.models import Filter, FieldCondition, MatchValue
@@ -7,10 +9,11 @@ COLLECTION_NAME = "mythverse"
 
 
 # Connect to Qdrant Docker
+load_dotenv()
 client = QdrantClient(
-    url="http://localhost:6333"
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
 )
-
 
 # Load embedding model once
 model = SentenceTransformer(
