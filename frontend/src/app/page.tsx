@@ -97,9 +97,6 @@ selectFirst({
 }
 
 
-
-
-
 function handleFirstCompare(value:any){
 
 setReligion(value.religion);
@@ -110,9 +107,6 @@ setBook(value.book);
 selectFirst(value);
 
 }
-
-
-
 
 
 function handleSecondCompare(value:any){

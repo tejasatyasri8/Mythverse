@@ -97,8 +97,7 @@ await sendChatMessage({
 
             {
                 role:"assistant",
-                content:
-                "Sorry, something went wrong."
+                content: "Error: " + String(error)
             }
 
         ]);

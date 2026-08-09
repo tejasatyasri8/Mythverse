@@ -23,15 +23,20 @@ export async function sendChatMessage(
     );
 
 
-    if(!response.ok){
+    if (!response.ok) {
 
-        throw new Error(
-            "Failed to get response"
+        const errorText = await response.text();
+
+        console.error(
+            "Backend error:",
+            response.status,
+            errorText
         );
 
+        throw new Error(
+            `Backend returned ${response.status}: ${errorText}`
+        );
     }
 
-
     return response.json();
-
 }
