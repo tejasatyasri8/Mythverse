@@ -32,7 +32,7 @@ def search_book(
     query: str,
     religion: str,
     book: str,
-    top_k: int = 2
+    top_k: int = 2,
 ):
 
     print("=" * 50)
@@ -42,7 +42,7 @@ def search_book(
 
     # -----------------------------------
     # Search Qdrant
-    # Qdrant generates the query embedding
+    # Qdrant Cloud generates the query embedding
     # -----------------------------------
 
     results = client.query_points(
@@ -50,12 +50,7 @@ def search_book(
 
         query=Document(
             text=query,
-            model="sentence-transformers/all-MiniLM-L6-v2"
-        ),
-
-        query=Document(
-            text=query,
-            model="sentence-transformers/all-MiniLM-L6-v2"
+            model="sentence-transformers/all-MiniLM-L6-v2",
         ),
 
         query_filter=Filter(
@@ -64,15 +59,15 @@ def search_book(
                     key="religion",
                     match=MatchValue(
                         value=religion
-                    )
+                    ),
                 ),
 
                 FieldCondition(
                     key="book",
                     match=MatchValue(
                         value=book
-                    )
-                )
+                    ),
+                ),
             ]
         ),
 
