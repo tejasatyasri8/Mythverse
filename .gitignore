@@ -46,3 +46,7 @@ backend/app/vectorstore/qdrant_data/
 
 # Python cache
 .pytest_cache/
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3

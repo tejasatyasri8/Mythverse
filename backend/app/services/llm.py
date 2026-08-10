@@ -66,7 +66,7 @@ def generate_response(
     try:
         
         # Load chat history
-        history = history[-2:]
+        history = history[-6:]
 
         # Retrieve relevant scripture
         
