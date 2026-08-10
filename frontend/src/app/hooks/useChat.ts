@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Message } from "../types/chat";
 import { sendChatMessage } from "../services/api";
 
 export default function useChat(
     religion?: string,
-    book?: string,
-    step?: number
+    book?: string
 ) {
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -23,21 +22,19 @@ export default function useChat(
         () => crypto.randomUUID()
     );
 
-    // Reset chat whenever the user enters the chat screen
-    useEffect(() => {
-        if (step === 4) {
-            setMessages([
-                {
-                    role: "assistant",
-                    content:
-                        "Welcome to MythVerse 🙏 Ask anything about scriptures."
-                }
-            ]);
+    function resetChat() {
+        setMessages([
+            {
+                role: "assistant",
+                content:
+                    "Welcome to MythVerse 🙏 Ask anything about scriptures."
+            }
+        ]);
 
-            // Create a completely new session
-            setSessionId(crypto.randomUUID());
-        }
-    }, [step, religion, book]);
+        setSessionId(crypto.randomUUID());
+
+        setLoading(false);
+    }
 
     async function sendMessage(text: string) {
         const userMessage: Message = {
@@ -84,6 +81,7 @@ export default function useChat(
     return {
         messages,
         loading,
-        sendMessage
+        sendMessage,
+        resetChat
     };
 }

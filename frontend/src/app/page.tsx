@@ -81,7 +81,7 @@ function handleBook(value:any){
 
 console.log("Religion name:", religion?.name);
 console.log("Book name:", value?.name);
-
+chat.resetChat();
 setBook(value);
 
 selectFirst({
@@ -93,6 +93,8 @@ selectFirst({
 
 
 function handleFirstCompare(value:any){
+
+chat.resetChat();
 
 setReligion(value.religion);
 
@@ -106,7 +108,7 @@ selectFirst(value);
 
 function handleSecondCompare(value:any){
 
-
+chat.resetChat();
 setReligion(value.religion);
 
 
