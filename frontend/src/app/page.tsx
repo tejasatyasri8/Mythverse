@@ -67,9 +67,6 @@ const chat = useChat(
 );
 
 
-
-
-
 function handleReligion(value:any){
 
     setReligion(value);
@@ -77,8 +74,6 @@ function handleReligion(value:any){
     selectReligion(value);
 
 }
-
-
 
 
 
