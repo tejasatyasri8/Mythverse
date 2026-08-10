@@ -1,3 +1,7 @@
+## Live Demo
+
+[Try MythVerse](https://mythverse-seven.vercel.app/)
+
 # MythVerse
 
 **MythVerse** is an AI-powered scripture knowledge assistant that uses **Retrieval-Augmented Generation (RAG)** to answer questions from selected religious texts.
