@@ -1,7 +1,7 @@
 "use client";
 
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Message} from "../types/chat";
 import {sendChatMessage} from "../services/api";
 
@@ -29,7 +29,15 @@ useState(false);
 const [sessionId] = useState(
     () => crypto.randomUUID()
 );
-
+useEffect(() => {
+        setMessages([
+            {
+                role: "assistant",
+                content:
+                    "Welcome to MythVerse 🙏 Ask anything about scriptures."
+            }
+        ]);
+    }, [religion, book]);
 
 async function sendMessage(
     text:string
