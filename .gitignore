@@ -23,3 +23,26 @@ qdrant_storage/
 backend/app/vectorstore/qdrant_data/
 
 backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables
+.env
+.env.*
+
+# Generated vectorstore files
+backend/app/vectorstore/*.pkl
+backend/app/vectorstore/*.index
+
+# Local Qdrant data
+backend/app/vectorstore/qdrant_data/
+
+# Python cache
+.pytest_cache/
