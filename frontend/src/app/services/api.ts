@@ -1,7 +1,7 @@
 import { ChatRequest, ChatResponse } from "../types/chat";
 
 
-const API_URL = "https://mythverse-backend.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 
 export async function sendChatMessage(
