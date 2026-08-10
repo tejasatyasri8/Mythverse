@@ -94,8 +94,9 @@ MythVerse uses a retrieval-first architecture rather than sending the user's que
 User Question
       │
       ▼
-Query Embedding
+Qdrant Cloud Inference
       │
+      │  Query Embedding
       ▼
 Qdrant Semantic Search
       │
@@ -223,7 +224,7 @@ More scripture collections can be added using the same data-processing and embed
 * Retrieval-Augmented Generation
 * Semantic vector search
 * Qdrant inference
-* `all-MiniLM-L6-v2`
+* `sentence-transformers/all-MiniLM-L6-v2`
 * Groq API
 
 ### Database / Infrastructure
