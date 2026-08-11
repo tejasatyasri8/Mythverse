@@ -62,8 +62,11 @@ useState<any>(null);
 
 
 const chat = useChat(
-    religion?.name,
-    book?.name
+    mode,
+    religion,
+    book,
+    firstScripture,
+    secondScripture
 );
 
 
@@ -85,8 +88,8 @@ chat.resetChat();
 setBook(value);
 
 selectFirst({
-    ...value,
-    religion: religion
+    religion: religion,
+    book: value
 });
 
 }
@@ -281,16 +284,14 @@ flex-col
 
 
 <ChatHeader
-
-title={
-book
-?
-`${book.name}`
-:
-"MythVerse"
-}
-onBack={goBack}
-
+    title={
+        mode === "compare"
+            ? `${firstScripture?.book?.name} vs ${secondScripture?.book?.name}`
+            : book
+                ? book.name
+                : "MythVerse"
+    }
+    onBack={goBack}
 />
 
 

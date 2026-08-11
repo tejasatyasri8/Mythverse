@@ -69,34 +69,24 @@ religion.id as keyof typeof BOOKS
 
 
 <Card
+    key={book.id}
+    onClick={() => {
 
-key={book.id}
+        if (
+            first &&
+            first.religion?.id === religion.id &&
+            first.book?.id === book.id
+        ) {
+            return;
+        }
 
-onClick={()=>{
-
-
-if(first && first.id===book.id){
-
-return;
-
-}
-
-
-onSelect({
-
-religion,
-
-book
-
-});
-
-
-}}
-
+        onSelect({
+            religion,
+            book
+        });
+    }}
 >
-
-{book.name}
-
+    {book.name}
 </Card>
 
 
