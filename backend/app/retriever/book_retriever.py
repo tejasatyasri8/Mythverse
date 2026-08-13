@@ -10,6 +10,7 @@ from qdrant_client.models import (
 )
 from sentence_transformers import CrossEncoder
 
+
 load_dotenv()
 
 COLLECTION_NAME = "mythverse"
@@ -31,9 +32,18 @@ client = QdrantClient(
 # Reranker
 # -----------------------------------
 
-reranker = CrossEncoder(
-    "cross-encoder/ms-marco-MiniLM-L-6-v2"
-)
+reranker = None
+
+
+def get_reranker():
+    global reranker
+
+    if reranker is None:
+        reranker = CrossEncoder(
+            "cross-encoder/ms-marco-MiniLM-L-6-v2"
+        )
+
+    return reranker
 
 
 # -----------------------------------
@@ -119,7 +129,7 @@ def search_book(
             for result in rerank_candidates
         ]
 
-        rerank_scores = reranker.predict(
+        rerank_scores = get_reranker().predict(
             pairs,
             show_progress_bar=False,
         )
