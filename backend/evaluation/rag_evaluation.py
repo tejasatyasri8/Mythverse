@@ -25,7 +25,11 @@ def reference_matches(result, expected_reference):
 
     # Bhagavad Gita
     if book == "Bhagavad Gita":
-        match = re.search(r"(\d+):(\d+)", expected_reference)
+
+        match = re.search(
+            r"(\d+):(\d+)",
+            expected_reference,
+        )
 
         if not match:
             return False
@@ -46,8 +50,13 @@ def reference_matches(result, expected_reference):
         if not reference:
             return False
 
-        actual_reference = normalize(str(reference))
-        expected_reference = normalize(expected_reference)
+        actual_reference = normalize(
+            str(reference)
+        )
+
+        expected_reference = normalize(
+            expected_reference
+        )
 
         actual_reference = re.sub(
             r"^psalm\b",
@@ -61,7 +70,11 @@ def reference_matches(result, expected_reference):
             expected_reference,
         )
 
-        return actual_reference == expected_reference
+        return (
+            actual_reference
+            == expected_reference
+        )
+
     return False
 
 
@@ -74,25 +87,40 @@ def evaluate_question(item, top_k=100):
         top_k=top_k,
     )
 
-    expected_references = item.get("expected_references")
+    expected_references = item.get(
+        "expected_references"
+    )
 
     if expected_references is None:
-        expected_reference = item.get("expected_reference")
+
+        expected_reference = item.get(
+            "expected_reference"
+        )
 
         if expected_reference is not None:
-            expected_references = [expected_reference]
+            expected_references = [
+                expected_reference
+            ]
+
         else:
             raise KeyError(
-                "Dataset must contain 'expected_references' "
+                "Dataset must contain "
+                "'expected_references' "
                 "or 'expected_reference'"
             )
 
     first_hit_rank = None
 
-    for rank, result in enumerate(results, start=1):
+    for rank, result in enumerate(
+        results,
+        start=1,
+    ):
 
         matched = any(
-            reference_matches(result, expected)
+            reference_matches(
+                result,
+                expected,
+            )
             for expected in expected_references
         )
 
@@ -100,12 +128,17 @@ def evaluate_question(item, top_k=100):
             first_hit_rank = rank
             break
 
-    return first_hit_rank
+    return first_hit_rank, results, expected_references
 
 
 def main():
 
-    with open(DATASET_PATH, "r", encoding="utf-8") as file:
+    with open(
+        DATASET_PATH,
+        "r",
+        encoding="utf-8",
+    ) as file:
+
         dataset = json.load(file)
 
     total = len(dataset)
@@ -118,9 +151,16 @@ def main():
 
     reciprocal_rank_sum = 0
 
+    failed_questions = []
+
     for item in dataset:
 
-        rank = evaluate_question(item, top_k=100)
+        rank, results, expected_references = (
+            evaluate_question(
+                item,
+                top_k=100,
+            )
+        )
 
         if rank is not None:
 
@@ -141,6 +181,18 @@ def main():
 
             reciprocal_rank_sum += 1 / rank
 
+        else:
+
+            failed_questions.append(
+                {
+                    "question": item["question"],
+                    "religion": item["religion"],
+                    "book": item["book"],
+                    "expected": expected_references,
+                    "results": results,
+                }
+            )
+
     print("\n")
     print("=" * 80)
     print("MYTHVERSE RAG EVALUATION")
@@ -149,28 +201,130 @@ def main():
     print(f"Questions: {total}")
 
     print(
-        f"Recall@1:   {hits_at_1 / total * 100:.2f}%"
+        f"Recall@1:   "
+        f"{hits_at_1 / total * 100:.2f}%"
     )
 
     print(
-        f"Recall@3:   {hits_at_3 / total * 100:.2f}%"
+        f"Recall@3:   "
+        f"{hits_at_3 / total * 100:.2f}%"
     )
 
     print(
-        f"Recall@5:   {hits_at_5 / total * 100:.2f}%"
+        f"Recall@5:   "
+        f"{hits_at_5 / total * 100:.2f}%"
     )
 
     print(
-        f"Recall@10:  {hits_at_10 / total * 100:.2f}%"
+        f"Recall@10:  "
+        f"{hits_at_10 / total * 100:.2f}%"
     )
 
     print(
-        f"Recall@100: {hits_at_100 / total * 100:.2f}%"
+        f"Recall@100: "
+        f"{hits_at_100 / total * 100:.2f}%"
     )
 
     print(
-        f"MRR:        {reciprocal_rank_sum / total:.4f}"
+        f"MRR:        "
+        f"{reciprocal_rank_sum / total:.4f}"
     )
+
+    # -----------------------------------
+    # Failed questions
+    # -----------------------------------
+
+    print("\n")
+    print("=" * 80)
+    print(
+        f"FAILED QUESTIONS "
+        f"({len(failed_questions)})"
+    )
+    print("=" * 80)
+
+    for number, failure in enumerate(
+        failed_questions,
+        start=1,
+    ):
+
+        print("\n" + "-" * 80)
+
+        print(
+            f"FAILURE #{number}"
+        )
+
+        print(
+            f"Question: "
+            f"{failure['question']}"
+        )
+
+        print(
+            f"Religion: "
+            f"{failure['religion']}"
+        )
+
+        print(
+            f"Book: "
+            f"{failure['book']}"
+        )
+
+        print(
+            "Expected references: "
+            f"{', '.join(failure['expected'])}"
+        )
+
+        print("\nTop 10 retrieved:")
+
+        for rank, result in enumerate(
+            failure["results"][:10],
+            start=1,
+        ):
+
+            metadata = result["metadata"]
+
+            if (
+                metadata["book"] == "Bible"
+                and metadata.get("reference")
+            ):
+                reference = metadata[
+                    "reference"
+                ]
+
+            else:
+                reference = (
+                    f"{metadata['chapter']}:"
+                    f"{metadata['verse']}"
+                )
+
+            semantic = result.get(
+                "score",
+                0.0,
+            )
+
+            rerank = result.get(
+                "rerank_score"
+            )
+
+            hybrid = result.get(
+                "hybrid_score"
+            )
+
+            print(
+                f"{rank}. "
+                f"{reference} "
+                f"(semantic={semantic:.4f}"
+                + (
+                    f", rerank={rerank:.4f}"
+                    if rerank is not None
+                    else ""
+                )
+                + (
+                    f", hybrid={hybrid:.4f}"
+                    if hybrid is not None
+                    else ""
+                )
+                + ")"
+            )
 
 
 if __name__ == "__main__":
