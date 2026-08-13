@@ -58,20 +58,23 @@ collections = client.get_collections().collections
 
 existing = [c.name for c in collections]
 
-if COLLECTION_NAME not in existing:
+if COLLECTION_NAME in existing:
 
-    client.create_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(
-            size=384,
-            distance=Distance.COSINE
-        )
+    client.delete_collection(
+        collection_name=COLLECTION_NAME
     )
 
-    print("Collection created.")
+    print("Existing collection deleted.")
 
-else:
-    print("Collection already exists.")
+client.create_collection(
+    collection_name=COLLECTION_NAME,
+    vectors_config=VectorParams(
+        size=384,
+        distance=Distance.COSINE
+    )
+)
+
+print("Collection created.")
 documents = []
 metadata = []
 
@@ -143,6 +146,7 @@ for verse in bible:
     metadata.append({
         "religion": "Christianity",
         "book": "Bible",
+        "reference": verse["reference"],
         "chapter": verse["chapter"],
         "verse": verse["verse"]
     })

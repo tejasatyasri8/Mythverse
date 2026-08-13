@@ -1,5 +1,4 @@
 import os
-import re
 
 from dotenv import load_dotenv
 from qdrant_client import QdrantClient
@@ -9,13 +8,15 @@ from qdrant_client.models import (
     MatchValue,
     Document,
 )
+from sentence_transformers import CrossEncoder
 
 load_dotenv()
 
 COLLECTION_NAME = "mythverse"
 
+
 # -----------------------------------
-# Qdrant Cloud connection
+# Qdrant Cloud
 # -----------------------------------
 
 client = QdrantClient(
@@ -27,146 +28,12 @@ client = QdrantClient(
 
 
 # -----------------------------------
-# Text normalization
+# Reranker
 # -----------------------------------
 
-def normalize_text(text: str) -> str:
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
-
-
-# -----------------------------------
-# Remove common stop words
-# -----------------------------------
-
-STOP_WORDS = {
-    "what",
-    "does",
-    "the",
-    "say",
-    "about",
-    "how",
-    "is",
-    "are",
-    "of",
-    "a",
-    "an",
-    "to",
-    "in",
-    "on",
-    "for",
-    "and",
-    "your",
-    "their",
-    "its",
-    "this",
-    "that",
-}
-
-
-def get_keywords(text: str):
-    words = normalize_text(text).split()
-
-    return {
-        word
-        for word in words
-        if word not in STOP_WORDS
-        and len(word) > 2
-    }
-
-
-# -----------------------------------
-# Reranking
-# -----------------------------------
-
-def rerank_results(query: str, results):
-
-    query_text = normalize_text(query)
-    query_keywords = get_keywords(query)
-
-    for result in results:
-
-        text = normalize_text(result["text"])
-        text_words = set(text.split())
-
-        # -----------------------------------
-        # Keyword overlap
-        # -----------------------------------
-
-        matched_keywords = query_keywords & text_words
-
-        if query_keywords:
-            keyword_overlap = (
-                len(matched_keywords)
-                / len(query_keywords)
-            )
-        else:
-            keyword_overlap = 0
-
-        # -----------------------------------
-        # Exact query phrase
-        # -----------------------------------
-
-        phrase_bonus = 0
-
-        if len(query_text) > 5 and query_text in text:
-            phrase_bonus = 0.20
-
-        # -----------------------------------
-        # Consecutive keyword phrase matching
-        # -----------------------------------
-
-        query_words = query_text.split()
-
-        for size in range(
-            min(4, len(query_words)),
-            1,
-            -1
-        ):
-
-            found_phrase = False
-
-            for i in range(
-                len(query_words) - size + 1
-            ):
-
-                phrase = " ".join(
-                    query_words[i:i + size]
-                )
-
-                if len(phrase) > 4 and phrase in text:
-                    phrase_bonus = max(
-                        phrase_bonus,
-                        size * 0.05
-                    )
-                    found_phrase = True
-                    break
-
-            if found_phrase:
-                break
-
-        # -----------------------------------
-        # Final score
-        # -----------------------------------
-
-        result["rerank_score"] = (
-            result["score"]
-            + (keyword_overlap * 0.20)
-            + phrase_bonus
-        )
-
-        result["matched_keywords"] = list(
-            matched_keywords
-        )
-
-    results.sort(
-        key=lambda x: x["rerank_score"],
-        reverse=True
-    )
-
-    return results
+reranker = CrossEncoder(
+    "cross-encoder/ms-marco-MiniLM-L-6-v2"
+)
 
 
 # -----------------------------------
@@ -185,11 +52,8 @@ def search_book(
     print("Book:", book)
     print("Query:", query)
 
-    # -----------------------------------
-    # Retrieve more semantic candidates
-    # -----------------------------------
-
-    candidate_k = max(top_k * 3, 30)
+    # Retrieve more candidates than we finally return.
+    candidate_k = max(top_k, 100)
 
     results = client.query_points(
         collection_name=COLLECTION_NAME,
@@ -203,26 +67,17 @@ def search_book(
             must=[
                 FieldCondition(
                     key="religion",
-                    match=MatchValue(
-                        value=religion
-                    ),
+                    match=MatchValue(value=religion),
                 ),
-
                 FieldCondition(
                     key="book",
-                    match=MatchValue(
-                        value=book
-                    ),
+                    match=MatchValue(value=book),
                 ),
             ]
         ),
 
         limit=candidate_k,
     )
-
-    # -----------------------------------
-    # Format results
-    # -----------------------------------
 
     output = []
 
@@ -239,40 +94,126 @@ def search_book(
                     "book": payload.get("book"),
                     "chapter": payload.get("chapter"),
                     "verse": payload.get("verse"),
+                    "reference": payload.get("reference"),
                 },
 
                 "score": point.score,
             }
         )
 
-    # -----------------------------------
-    # Rerank
-    # -----------------------------------
-
-    output = rerank_results(
-        query,
-        output
+    print(
+        f"\nRetrieved {len(output)} semantic candidates."
     )
 
     # -----------------------------------
-    # Print final ranking
+    # Neural reranking
     # -----------------------------------
 
-    print("\nRERANKED RESULTS:")
+    if output:
+
+        rerank_candidates = output[:30]
+        remaining_candidates = output[30:]
+
+        pairs = [
+            [query, result["text"]]
+            for result in rerank_candidates
+        ]
+
+        rerank_scores = reranker.predict(
+            pairs,
+            show_progress_bar=False,
+        )
+
+        for result, rerank_score in zip(
+            rerank_candidates,
+            rerank_scores,
+        ):
+            result["rerank_score"] = float(
+                rerank_score
+            )
+
+        # -----------------------------------
+        # Hybrid ranking
+        # -----------------------------------
+
+        if rerank_candidates:
+
+            semantic_scores = [
+                result["score"]
+                for result in rerank_candidates
+            ]
+
+            rerank_scores = [
+                result["rerank_score"]
+                for result in rerank_candidates
+            ]
+
+            min_semantic = min(semantic_scores)
+            max_semantic = max(semantic_scores)
+
+            min_rerank = min(rerank_scores)
+            max_rerank = max(rerank_scores)
+
+            for result in rerank_candidates:
+
+                if max_semantic > min_semantic:
+                    semantic_normalized = (
+                        (result["score"] - min_semantic)
+                        / (max_semantic - min_semantic)
+                    )
+                else:
+                    semantic_normalized = 0.0
+
+                if max_rerank > min_rerank:
+                    rerank_normalized = (
+                        (result["rerank_score"] - min_rerank)
+                        / (max_rerank - min_rerank)
+                    )
+                else:
+                    rerank_normalized = 0.0
+
+                result["hybrid_score"] = (
+                    0.3 * semantic_normalized
+                    + 0.7 * rerank_normalized
+                )
+
+            rerank_candidates.sort(
+                key=lambda result: result["hybrid_score"],
+                reverse=True,
+            )
+
+        output = rerank_candidates + remaining_candidates
+
+    # -----------------------------------
+    # Print results
+    # -----------------------------------
+
+    print("\nTOP RESULTS:")
 
     for i, result in enumerate(
         output[:top_k],
-        start=1
+        start=1,
     ):
 
         metadata = result["metadata"]
 
+        if (
+            metadata["book"] == "Bible"
+            and metadata.get("reference")
+        ):
+            reference = metadata["reference"]
+        else:
+            reference = (
+                f"{metadata['chapter']}:{metadata['verse']}"
+            )
+
         print(
             f"{i}. "
             f"{metadata['book']} "
-            f"{metadata['chapter']}:{metadata['verse']} "
+            f"{reference} "
             f"(semantic={result['score']:.4f}, "
-            f"rerank={result['rerank_score']:.4f})"
+            f"rerank={result.get('rerank_score', 0.0):.4f}, "
+            f"hybrid={result.get('hybrid_score', 0.0):.4f})"
         )
 
     return output[:top_k]

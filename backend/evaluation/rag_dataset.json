@@ -1,0 +1,603 @@
+[
+  {
+    "question": "What does the Bhagavad Gita say about duty?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:47", "3:19", "18:47"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about selfless action?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["3:7", "3:19", "3:30"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about controlling the mind?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["6:5", "6:6", "6:26"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about meditation?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["6:10", "6:11", "6:12"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about desire?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:62", "2:63", "3:37"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about anger?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:62", "2:63", "3:37"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about fear?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["4:10", "16:1", "18:30"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about faith?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["4:39", "17:3", "17:28"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about knowledge?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["4:33", "4:34", "4:38"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about wisdom?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:55", "2:56", "2:57"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about equanimity?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:48", "2:50", "6:9"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about attachment?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:47", "2:48", "3:19"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about karma?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["3:5", "3:8", "3:9"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about performing action without expecting results?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:47", "2:48", "3:19"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the soul?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:20", "2:22", "2:23"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about death?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:27", "2:20", "2:22"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about reincarnation?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:22", "2:13", "8:6"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about devotion to God?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["9:22", "9:26", "12:6"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about surrendering to God?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["18:62", "18:65", "18:66"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about compassion?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["12:13", "16:2", "17:15"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about humility?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["13:7", "13:8", "16:1"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about truth?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["16:2", "17:15", "10:4"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about forgiveness?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["10:4", "12:13", "16:2"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about discipline?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["6:16", "6:17", "17:14"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about controlling the senses?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:58", "2:60", "2:61"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about peace?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:70", "5:29", "12:12"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about happiness?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["5:21", "6:21", "18:37"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about suffering?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:14", "2:15", "8:15"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about desireless action?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["3:7", "3:19", "3:30"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the three gunas?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["14:5", "14:6", "14:7"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about sattva?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["14:6", "17:8", "18:20"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about rajas?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["14:7", "14:12", "17:9"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about tamas?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["14:8", "14:13", "17:10"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about yoga?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:48", "6:2", "6:23"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about liberation?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:51", "5:24", "18:54"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the nature of God?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["7:7", "9:4", "10:8"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about seeing God in all beings?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["6:29", "6:30", "6:31"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about charity?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["17:20", "17:21", "17:22"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about sacrifice?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["3:9", "4:23", "9:27"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about food?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["17:7", "17:8", "17:9"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about fearlessness?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["16:1", "18:30", "4:10"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about anger and desire?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:62", "2:63", "3:37"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the importance of spiritual knowledge?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["4:33", "4:34", "4:38"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about devotion and surrender?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["12:6", "18:65", "18:66"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about doing one's own duty?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["3:35", "18:47", "18:48"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about remaining steady in success and failure?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:38", "2:48", "2:50"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about overcoming attachment?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:47", "2:48", "3:30"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the characteristics of a wise person?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["2:55", "2:56", "2:57"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about seeing the same self in everyone?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["5:18", "6:29", "6:32"]
+  },
+  {
+    "question": "What does the Bhagavad Gita say about the path to God?",
+    "religion": "Hinduism",
+    "book": "Bhagavad Gita",
+    "expected_references": ["8:22", "12:6", "18:66"]
+  },
+
+  {
+    "question": "What does the Bible say about seeking wisdom?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 4:7", "Proverbs 2:6", "James 1:5"]
+  },
+  {
+    "question": "What does the Bible say about eternal life?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["John 3:15", "John 3:16", "1 John 5:11", "Romans 6:23"]
+  },
+  {
+    "question": "What does the Bible say about prayer?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 6:6", "Matthew 7:7", "1 Thessalonians 5:17", "Philippians 4:6"]
+  },
+  {
+    "question": "What does the Bible say about forgiveness?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 6:14", "Matthew 6:15", "Ephesians 4:32", "Colossians 3:13"]
+  },
+  {
+    "question": "What does the Bible say about love?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["1 John 4:7", "1 John 4:8", "1 Corinthians 13:4", "John 13:34"]
+  },
+  {
+    "question": "What does the Bible say about faith?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Hebrews 11:1", "Hebrews 11:6", "Romans 10:17", "Ephesians 2:8"]
+  },
+  {
+    "question": "What does the Bible say about trusting God?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 3:5", "Proverbs 3:6", "Psalm 37:5"]
+  },
+  {
+    "question": "What does the Bible say about helping the poor?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 19:17", "Proverbs 31:9", "Matthew 25:35", "Matthew 25:40"]
+  },
+  {
+    "question": "What does the Bible say about being humble?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 16:18", "Proverbs 22:4", "Philippians 2:3", "James 4:6"]
+  },
+  {
+    "question": "What does the Bible say about overcoming fear?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Isaiah 41:10", "Psalm 23:4", "2 Timothy 1:7", "John 14:27"]
+  },
+  {
+    "question": "What does the Bible say about patience?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 14:29", "Romans 12:12", "James 1:3", "James 5:7"]
+  },
+  {
+    "question": "What does the Bible say about controlling anger?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 14:29", "Proverbs 15:1", "Ephesians 4:26", "James 1:19"]
+  },
+  {
+    "question": "What does the Bible say about helping others?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Galatians 6:2", "Philippians 2:4", "Hebrews 13:16", "Matthew 25:40"]
+  },
+  {
+    "question": "What does the Bible say about honesty?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 12:22", "Proverbs 19:1", "Ephesians 4:25", "Colossians 3:9"]
+  },
+  {
+    "question": "What does the Bible say about temptation?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["1 Corinthians 10:13", "James 1:12", "James 1:13", "Matthew 26:41"]
+  },
+  {
+    "question": "What does the Bible say about anxiety and worry?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Philippians 4:6", "Philippians 4:7", "Matthew 6:25", "1 Peter 5:7"]
+  },
+  {
+    "question": "What does the Bible say about kindness?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Ephesians 4:32", "Colossians 3:12", "Proverbs 19:22", "Luke 6:35"]
+  },
+  {
+    "question": "What does the Bible say about loving your enemies?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 5:44", "Luke 6:27", "Luke 6:35"]
+  },
+  {
+    "question": "What does the Bible say about repentance?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Acts 3:19", "1 John 1:9", "Luke 13:3", "2 Chronicles 7:14"]
+  },
+  {
+    "question": "What does the Bible say about God's guidance?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 3:5", "Proverbs 3:6", "Psalm 32:8", "Isaiah 30:21"]
+  },
+  {
+    "question": "What does the Bible say about trusting God during difficult times?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Psalm 46:1", "Isaiah 41:10", "Psalm 55:22"]
+  },
+  {
+    "question": "What does the Bible say about courage?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Joshua 1:9", "Psalm 27:14", "2 Timothy 1:7"]
+  },
+  {
+    "question": "What does the Bible say about hope?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Romans 15:13", "Jeremiah 29:11", "Psalm 42:11"]
+  },
+  {
+    "question": "What does the Bible say about peace?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["John 14:27", "Philippians 4:7", "Isaiah 26:3"]
+  },
+  {
+    "question": "What does the Bible say about gratitude?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["1 Thessalonians 5:18", "Colossians 3:15", "Psalm 107:1"]
+  },
+  {
+    "question": "What does the Bible say about serving others?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Galatians 5:13", "Mark 10:45", "1 Peter 4:10"]
+  },
+  {
+    "question": "What does the Bible say about generosity?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["2 Corinthians 9:6", "2 Corinthians 9:7", "Proverbs 11:25"]
+  },
+  {
+    "question": "What does the Bible say about helping those in need?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 19:17", "Matthew 25:40", "Hebrews 13:16"]
+  },
+  {
+    "question": "What does the Bible say about treating others well?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 7:12", "Luke 6:31", "Romans 12:10"]
+  },
+  {
+    "question": "What does the Bible say about judging others?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 7:1", "Matthew 7:2", "Romans 14:10"]
+  },
+  {
+    "question": "What does the Bible say about resisting evil?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["James 4:7", "Romans 12:21", "1 Peter 5:9"]
+  },
+  {
+    "question": "What does the Bible say about doing good?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Galatians 6:9", "Galatians 6:10", "James 4:17"]
+  },
+  {
+    "question": "What does the Bible say about perseverance?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Romans 5:3", "Romans 5:4", "James 1:12"]
+  },
+  {
+    "question": "What does the Bible say about endurance?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Hebrews 12:1", "James 1:3", "Romans 5:3"]
+  },
+  {
+    "question": "What does the Bible say about wisdom and understanding?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 2:6", "Proverbs 4:7", "James 1:5"]
+  },
+  {
+    "question": "What does the Bible say about keeping God's commandments?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["John 14:15", "1 John 5:3", "Ecclesiastes 12:13"]
+  },
+  {
+    "question": "What does the Bible say about loving God?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 22:37", "Deuteronomy 6:5", "1 John 4:19"]
+  },
+  {
+    "question": "What does the Bible say about loving your neighbor?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 22:39", "Mark 12:31", "Romans 13:9"]
+  },
+  {
+    "question": "What does the Bible say about compassion?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Colossians 3:12", "Ephesians 4:32", "Luke 6:36"]
+  },
+  {
+    "question": "What does the Bible say about humility before God?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["James 4:6", "James 4:10", "1 Peter 5:5"]
+  },
+  {
+    "question": "What does the Bible say about confession of sins?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["1 John 1:9", "James 5:16", "Proverbs 28:13"]
+  },
+  {
+    "question": "What does the Bible say about resisting temptation?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["1 Corinthians 10:13", "James 4:7", "Matthew 26:41"]
+  },
+  {
+    "question": "What does the Bible say about God's protection?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Psalm 91:1", "Psalm 91:2", "Psalm 121:7"]
+  },
+  {
+    "question": "What does the Bible say about God's faithfulness?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Lamentations 3:22", "Lamentations 3:23", "1 Corinthians 1:9"]
+  },
+  {
+    "question": "What does the Bible say about being truthful?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Ephesians 4:25", "Proverbs 12:22", "Colossians 3:9"]
+  },
+  {
+    "question": "What does the Bible say about controlling the tongue?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["James 1:19", "James 3:5", "Proverbs 21:23"]
+  },
+  {
+    "question": "What does the Bible say about avoiding anger?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Proverbs 15:1", "Proverbs 14:29", "James 1:19"]
+  },
+  {
+    "question": "What does the Bible say about contentment?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Philippians 4:11", "Philippians 4:12", "1 Timothy 6:6"]
+  },
+  {
+    "question": "What does the Bible say about material wealth?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 6:19", "Matthew 6:20", "1 Timothy 6:10"]
+  },
+  {
+    "question": "What does the Bible say about forgiveness and reconciliation?",
+    "religion": "Christianity",
+    "book": "Bible",
+    "expected_references": ["Matthew 5:23", "Matthew 5:24", "Colossians 3:13"]
+  }
+]
