@@ -8,7 +8,7 @@ from qdrant_client.models import (
     MatchValue,
     Document,
 )
-from sentence_transformers import CrossEncoder
+
 
 
 load_dotenv()
@@ -35,15 +35,7 @@ client = QdrantClient(
 reranker = None
 
 
-def get_reranker():
-    global reranker
 
-    if reranker is None:
-        reranker = CrossEncoder(
-            "cross-encoder/ms-marco-MiniLM-L-6-v2"
-        )
-
-    return reranker
 
 
 # -----------------------------------
@@ -114,85 +106,6 @@ def search_book(
     print(
         f"\nRetrieved {len(output)} semantic candidates."
     )
-
-    # -----------------------------------
-    # Neural reranking
-    # -----------------------------------
-
-    if output:
-
-        rerank_candidates = output[:30]
-        remaining_candidates = output[30:]
-
-        pairs = [
-            [query, result["text"]]
-            for result in rerank_candidates
-        ]
-
-        rerank_scores = get_reranker().predict(
-            pairs,
-            show_progress_bar=False,
-        )
-
-        for result, rerank_score in zip(
-            rerank_candidates,
-            rerank_scores,
-        ):
-            result["rerank_score"] = float(
-                rerank_score
-            )
-
-        # -----------------------------------
-        # Hybrid ranking
-        # -----------------------------------
-
-        if rerank_candidates:
-
-            semantic_scores = [
-                result["score"]
-                for result in rerank_candidates
-            ]
-
-            rerank_scores = [
-                result["rerank_score"]
-                for result in rerank_candidates
-            ]
-
-            min_semantic = min(semantic_scores)
-            max_semantic = max(semantic_scores)
-
-            min_rerank = min(rerank_scores)
-            max_rerank = max(rerank_scores)
-
-            for result in rerank_candidates:
-
-                if max_semantic > min_semantic:
-                    semantic_normalized = (
-                        (result["score"] - min_semantic)
-                        / (max_semantic - min_semantic)
-                    )
-                else:
-                    semantic_normalized = 0.0
-
-                if max_rerank > min_rerank:
-                    rerank_normalized = (
-                        (result["rerank_score"] - min_rerank)
-                        / (max_rerank - min_rerank)
-                    )
-                else:
-                    rerank_normalized = 0.0
-
-                result["hybrid_score"] = (
-                    0.3 * semantic_normalized
-                    + 0.7 * rerank_normalized
-                )
-
-            rerank_candidates.sort(
-                key=lambda result: result["hybrid_score"],
-                reverse=True,
-            )
-
-        output = rerank_candidates + remaining_candidates
 
     # -----------------------------------
     # Print results
