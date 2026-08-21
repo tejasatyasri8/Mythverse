@@ -3,15 +3,23 @@ from dotenv import load_dotenv
 from qdrant_client import QdrantClient, models
 from sentence_transformers import SentenceTransformer
 from openai import OpenAI
+import re
 
 load_dotenv()
 
 COLLECTION_NAME = "mythverse"
 
 # -----------------------------------
-# Model Initialization
+# Lazy-Load Model Initialization
 # -----------------------------------
-dense_model = SentenceTransformer("all-MiniLM-L6-v2")
+_dense_model = None
+
+def get_dense_model():
+    global _dense_model
+    if _dense_model is None:
+        print("Loading SentenceTransformer model into memory...")
+        _dense_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _dense_model
 
 # Point the OpenAI client to Groq's free endpoint
 llm_client = OpenAI(
@@ -27,8 +35,6 @@ client = QdrantClient(
     api_key=os.getenv("QDRANT_API_KEY"),
     timeout=60,
 )
-
-import re
 
 # -----------------------------------
 # HyDE Generator
@@ -87,7 +93,8 @@ def search_book(
     print("HyDE Expanded Text:", hyde_text)
 
     # 2. Embed the hypothetical text
-    dense_query = dense_model.encode(hyde_text).tolist()
+    model = get_dense_model()
+    dense_query = model.encode(hyde_text).tolist()
 
     # 3. Query Qdrant
     results = client.query_points(
