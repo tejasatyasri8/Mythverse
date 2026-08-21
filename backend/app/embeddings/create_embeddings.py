@@ -7,7 +7,10 @@ from qdrant_client.models import PointStruct
 from qdrant_client.models import Distance, VectorParams
 import uuid
 from sentence_transformers import SentenceTransformer
-
+from qdrant_client.models import SparseVectorParams
+from fastembed import SparseTextEmbedding
+from qdrant_client import QdrantClient, models
+from qdrant_client.models import PointStruct, Distance, VectorParams, SparseVectorParams
 
 # Paths
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -43,11 +46,19 @@ VECTORSTORE_DIR.mkdir(
 
 
 # Load embedding model
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
+model = SentenceTransformer("all-MiniLM-L6-v2")
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 client = QdrantClient(
-    url="http://localhost:6333"
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY"),
+    timeout=120,
+)
+sparse_model = SparseTextEmbedding(
+    model_name="Qdrant/bm25"
 )
 
 COLLECTION_NAME = "mythverse"
@@ -66,15 +77,40 @@ if COLLECTION_NAME in existing:
 
     print("Existing collection deleted.")
 
+
+
 client.create_collection(
     collection_name=COLLECTION_NAME,
-    vectors_config=VectorParams(
-        size=384,
-        distance=Distance.COSINE
-    )
+    vectors_config={
+        "dense": VectorParams(
+            size=384,
+            distance=Distance.COSINE
+        )
+    },
+    sparse_vectors_config={
+        "sparse": SparseVectorParams(
+            # Using the IDF modifier is standard for BM25 search
+            index=models.SparseIndexParams(
+                on_disk=False,
+            )
+        )
+    }
 )
 
 print("Collection created.")
+client.create_payload_index(
+    collection_name=COLLECTION_NAME,
+    field_name="religion",
+    field_schema=models.PayloadSchemaType.KEYWORD,
+)
+
+client.create_payload_index(
+    collection_name=COLLECTION_NAME,
+    field_name="book",
+    field_schema=models.PayloadSchemaType.KEYWORD,
+)
+
+print("Payload indexes created.")
 documents = []
 metadata = []
 
@@ -157,33 +193,42 @@ print(
 )
 
 
-# Generate embeddings
-
-embeddings = model.encode(
+# Generate Dense Embeddings
+dense_embeddings = model.encode(
     documents,
     convert_to_numpy=True,
     normalize_embeddings=True
 )
+
+# Generate Sparse (BM25) Embeddings
+sparse_embeddings = list(sparse_model.embed(documents))
+
+
 
 
 # Upload embeddings to Qdrant
 
 batch_size = 500
 
-for start in range(0, len(embeddings), batch_size):
-
+for start in range(0, len(dense_embeddings), batch_size):
     batch_points = []
-
-    end = min(start + batch_size, len(embeddings))
+    end = min(start + batch_size, len(dense_embeddings))
 
     for i in range(start, end):
+        
+        # FastEmbed returns a SparseEmbedding object containing indices and values
+        sparse_vec = sparse_embeddings[i]
 
         batch_points.append(
             PointStruct(
                 id=str(uuid.uuid4()),
-
-                vector=embeddings[i].tolist(),
-
+                vector={
+                    "dense": dense_embeddings[i].tolist(),
+                    "sparse": models.SparseVector(
+                        indices=sparse_vec.indices.tolist(),
+                        values=sparse_vec.values.tolist()
+                    )
+                },
                 payload={
                     "text": documents[i],
                     **metadata[i]
@@ -191,13 +236,11 @@ for start in range(0, len(embeddings), batch_size):
             )
         )
 
-
     client.upsert(
         collection_name=COLLECTION_NAME,
         points=batch_points
     )
 
-    print(f"Uploaded {end}/{len(embeddings)}")
 
 print("Uploaded embeddings to Qdrant.")
 

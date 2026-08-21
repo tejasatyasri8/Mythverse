@@ -169,36 +169,31 @@ print(
 # Update Qdrant
 # -----------------------------------
 
-BATCH_SIZE = 100
+from qdrant_client import models
 
-for start in range(
-    0,
-    len(updates),
-    BATCH_SIZE
-):
+BATCH_SIZE = 500
 
-    batch = updates[
-        start:start + BATCH_SIZE
-    ]
-
-    for point_id, payload in batch:
-
-        client.set_payload(
-            collection_name=COLLECTION_NAME,
-            payload=payload,
-            points=[point_id],
-            wait=False,
+for start in range(0, len(updates), BATCH_SIZE):
+    batch = updates[start : start + BATCH_SIZE]
+    
+    operations = [
+        models.SetPayloadOperation(
+            set_payload=models.SetPayload(
+                payload=payload,
+                points=[point_id],
+            )
         )
-
-    completed = min(
-        start + BATCH_SIZE,
-        len(updates),
+        for point_id, payload in batch
+    ]
+    
+    client.batch_update_points(
+        collection_name=COLLECTION_NAME,
+        update_operations=operations,
+        wait=False,
     )
-
-    print(
-        f"Updated: "
-        f"{completed}/{len(updates)}"
-    )
+    
+    completed = min(start + BATCH_SIZE, len(updates))
+    print(f"Updated: {completed}/{len(updates)}")
 
 # -----------------------------------
 # Done

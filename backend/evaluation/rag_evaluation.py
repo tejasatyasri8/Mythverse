@@ -151,8 +151,6 @@ def main():
 
     reciprocal_rank_sum = 0
 
-    failed_questions = []
-
     for item in dataset:
 
         rank, results, expected_references = (
@@ -180,18 +178,6 @@ def main():
                 hits_at_100 += 1
 
             reciprocal_rank_sum += 1 / rank
-
-        else:
-
-            failed_questions.append(
-                {
-                    "question": item["question"],
-                    "religion": item["religion"],
-                    "book": item["book"],
-                    "expected": expected_references,
-                    "results": results,
-                }
-            )
 
     print("\n")
     print("=" * 80)
@@ -229,102 +215,6 @@ def main():
         f"MRR:        "
         f"{reciprocal_rank_sum / total:.4f}"
     )
-
-    # -----------------------------------
-    # Failed questions
-    # -----------------------------------
-
-    print("\n")
-    print("=" * 80)
-    print(
-        f"FAILED QUESTIONS "
-        f"({len(failed_questions)})"
-    )
-    print("=" * 80)
-
-    for number, failure in enumerate(
-        failed_questions,
-        start=1,
-    ):
-
-        print("\n" + "-" * 80)
-
-        print(
-            f"FAILURE #{number}"
-        )
-
-        print(
-            f"Question: "
-            f"{failure['question']}"
-        )
-
-        print(
-            f"Religion: "
-            f"{failure['religion']}"
-        )
-
-        print(
-            f"Book: "
-            f"{failure['book']}"
-        )
-
-        print(
-            "Expected references: "
-            f"{', '.join(failure['expected'])}"
-        )
-
-        print("\nTop 10 retrieved:")
-
-        for rank, result in enumerate(
-            failure["results"][:10],
-            start=1,
-        ):
-
-            metadata = result["metadata"]
-
-            if (
-                metadata["book"] == "Bible"
-                and metadata.get("reference")
-            ):
-                reference = metadata[
-                    "reference"
-                ]
-
-            else:
-                reference = (
-                    f"{metadata['chapter']}:"
-                    f"{metadata['verse']}"
-                )
-
-            semantic = result.get(
-                "score",
-                0.0,
-            )
-
-            rerank = result.get(
-                "rerank_score"
-            )
-
-            hybrid = result.get(
-                "hybrid_score"
-            )
-
-            print(
-                f"{rank}. "
-                f"{reference} "
-                f"(semantic={semantic:.4f}"
-                + (
-                    f", rerank={rerank:.4f}"
-                    if rerank is not None
-                    else ""
-                )
-                + (
-                    f", hybrid={hybrid:.4f}"
-                    if hybrid is not None
-                    else ""
-                )
-                + ")"
-            )
 
 
 if __name__ == "__main__":
