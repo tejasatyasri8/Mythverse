@@ -60,15 +60,15 @@ def generate_hypothetical_document(query: str, religion: str, book: str) -> str:
                 {"role": "user", "content": query},
             ],
             temperature=0.5,
-            max_tokens=150,
-            reasoning_effort="none"
+            max_tokens=150
         )
         content = response.choices[0].message.content
         if not content:
             return query
             
-        # Strip out reasoning tags (<think>...</think>) if present
+        # Strip out reasoning tags and any stray markdown blocks
         cleaned_content = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+        cleaned_content = re.sub(r'```.*?```', '', cleaned_content, flags=re.DOTALL).strip()
         
         # Fallback if cleaning leaves it empty
         return cleaned_content if cleaned_content else query

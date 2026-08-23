@@ -1,3 +1,5 @@
+import re
+
 from groq import Groq
 from sqlalchemy.orm import Session
 
@@ -11,86 +13,15 @@ client = Groq(api_key=GROQ_API_KEY)
 SYSTEM_MESSAGE = {
     "role": "system",
     "content": (
-        "You are MythVerse, an AI scripture knowledge assistant that "
-        "answers ONLY from the provided scripture context.\n\n"
-
+        "You are MythVerse, a wise and concise scripture knowledge assistant. "
+        "Answer the user's question directly and naturally using ONLY the provided scripture context.\n\n"
         "Core Rules:\n"
         "1. Use only the supplied scripture context to answer.\n"
-        "2. Do not use outside knowledge or add teachings that are not present "
-        "in the context.\n"
-        "3. If the provided context does not contain enough information, "
-        "clearly say that the selected scripture does not provide enough "
-        "information for this question.\n"
-        "4. Never invent chapter numbers, verses, quotes, or references.\n\n"
-
-        "Answer Style:\n"
-        "5. Do not simply repeat scripture text. Explain the meaning in "
-        "simple, clear language.\n"
-        "6. Explain concepts in a way that a modern reader can understand.\n"
-        "7. Include practical connections to everyday life when supported "
-        "by the scripture meaning.\n"
-        "8. Give a realistic modern-life example when appropriate.\n"
-        "9. Keep the tone respectful, educational, calm, and beginner-friendly.\n\n"
-
-        "Comparison Rules:\n"
-        "10. When comparing two scriptures, clearly distinguish which teaching "
-        "comes from which scripture.\n"
-        "11. Identify similarities only when they are supported by the "
-        "provided contexts.\n"
-        "12. Identify differences only when they are supported by the "
-        "provided contexts.\n"
-        "13. Never claim that one religion or scripture is superior to another.\n"
-        "14. Do not use outside religious knowledge to fill missing information.\n"
-        "15. If one scripture does not contain enough information, clearly "
-        "state that instead of guessing.\n\n"
-
-        "Response Format for Single Scripture:\n"
-        "📖 Meaning:\n"
-        "Explain what the teaching means in simple words.\n\n"
-
-        "💡 Explanation:\n"
-        "Explain why this teaching is important.\n\n"
-
-        "🌱 Modern Life Application:\n"
-        "Explain how the principle can be applied today.\n\n"
-
-        "🌍 Example:\n"
-        "Provide a relatable real-world example.\n\n"
-
-        "📜 Scripture Reference:\n"
-        "Mention the exact chapter and verse references used.\n\n"
-
-        "For comparisons, prefer:\n"
-        "📖 Scripture 1:\n"
-        "Explain the teaching found in the first scripture.\n\n"
-
-        "📖 Scripture 2:\n"
-        "Explain the teaching found in the second scripture.\n\n"
-
-        "🔎 Similarities:\n"
-        "Explain supported similarities.\n\n"
-
-        "⚖️ Differences:\n"
-        "Explain supported differences.\n\n"
-
-        "🌱 Modern Life Application:\n"
-        "Explain the practical lesson supported by both contexts.\n\n"
-
-        "📜 Scripture References:\n"
-        "Mention the exact references used from both scriptures.\n\n"
-
-        "Safety:\n"
-        "16. Do not use harsh, insulting, or offensive language.\n"
-        "17. Do not criticize or compare religions negatively.\n"
-        "18. End every answer with a short Key Takeaway summarizing the "
-        "main lesson in one or two sentences.\n"
-        "19. Use modern examples only to explain the supplied teachings, "
-        "not to introduce new teachings.\n"
-        "20. If the user gives a short acknowledgement, gratitude, "
-        "confirmation, or closing message such as 'thanks', 'okay', "
-        "or 'got it', respond briefly and conversationally.\n"
-        "21. Keep responses concise while maintaining explanation quality.\n"
-        "22. Avoid unnecessary repetition.\n"
+        "2. Do not use outside knowledge or add unverified details.\n"
+        "3. If the context is insufficient, clearly state that the selected scripture does not provide enough information.\n"
+        "4. Keep explanations clear, concise, and beginner-friendly without using rigid or multi-section headings.\n"
+        "5. If the user greets you (e.g., Hello, Namaste, Vanakkam, Hi, etc.) or offers a casual acknowledgment, respond warmly and briefly as a scripture assistant without forcing scripture verses into the greeting.\n"
+        "6. End with a short Key Takeaway summarizing the main lesson in one sentence when answering scripture questions."
     )
 }
 
@@ -113,6 +44,42 @@ def build_context(verses):
     return context
 
 
+def clean_llm_response(content):
+    """
+    Remove reasoning/thinking blocks and stray markdown code blocks
+    before returning the final answer to the user.
+    """
+
+    if not content:
+        return ""
+
+    # Remove <think>...</think>
+    content = re.sub(
+        r"<think>.*?</think>",
+        "",
+        content,
+        flags=re.DOTALL | re.IGNORECASE
+    )
+
+    # Remove any unclosed <think> block just in case
+    content = re.sub(
+        r"<think>.*$",
+        "",
+        content,
+        flags=re.DOTALL | re.IGNORECASE
+    )
+
+    # Remove stray markdown code blocks
+    content = re.sub(
+        r"```.*?```",
+        "",
+        content,
+        flags=re.DOTALL
+    )
+
+    return content.strip()
+
+
 def generate_response(
     db: Session,
     session_id: str,
@@ -131,6 +98,18 @@ def generate_response(
     history: list | None = None
 ):
     try:
+        # Catch simple casual greetings immediately
+        cleaned_msg = user_message.strip().lower()
+
+        if cleaned_msg in ["hi", "hello", "hey", "greetings"]:
+            return {
+                "answer": (
+                    "Hello! 🙏 I'm MythVerse, your scripture knowledge assistant. "
+                    "Feel free to ask any questions about the Bhagavad Gita "
+                    "or other texts you'd like to explore."
+                ),
+                "sources": []
+            }
 
         history = history or []
         history = history[-6:]
@@ -197,8 +176,12 @@ def generate_response(
                 messages=messages
             )
 
+            answer = clean_llm_response(
+                response.choices[0].message.content
+            )
+
             return {
-                "answer": response.choices[0].message.content,
+                "answer": answer,
                 "sources": verses
             }
 
@@ -315,10 +298,14 @@ def generate_response(
                 messages=messages
             )
 
+            answer = clean_llm_response(
+                response.choices[0].message.content
+            )
+
             all_sources = first_verses + second_verses
 
             return {
-                "answer": response.choices[0].message.content,
+                "answer": answer,
                 "sources": all_sources
             }
 
